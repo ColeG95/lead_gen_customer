@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lead_gen_customer/screens/contact_screen.dart';
 import 'package:lead_gen_customer/screens/location_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
