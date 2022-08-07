@@ -6,13 +6,16 @@ TextStyle basicButtonStyle = TextStyle(
   color: Colors.white,
 );
 
-TextStyle basicButtonStyleBig = TextStyle(
-  fontSize: 20,
-  color: Colors.white,
-);
-
 TextStyle titleTextStyle(BuildContext context) {
   return TextStyle(
     fontSize: ResponsiveWidget.isSmallScreen(context) ? 20 : 24,
+  );
+}
+
+void showSnackBar(BuildContext context, String text) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(text),
+    ),
   );
 }
