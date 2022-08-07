@@ -7,6 +7,7 @@ import 'package:location/location.dart';
 import 'package:lead_gen_customer/models/coordinates.dart';
 import 'package:lead_gen_customer/http/current_location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:platform_device_id/platform_device_id.dart';
 
 class LocationScreen extends StatefulWidget {
   LocationScreen({Key? key}) : super(key: key);
@@ -24,25 +25,20 @@ class _LocationScreenState extends State<LocationScreen> {
 
   DocumentReference? leadRef;
 
-  void getCurrentLocation(BuildContext context) async {
-    Location location = Location();
-    bool serviceEnabled;
-    PermissionStatus permissionGranted;
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        return;
-      }
-    }
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
+  String? deviceId;
 
+  @override
+  void initState() {
+    super.initState();
+
+    getDeviceId();
+  }
+
+  void getDeviceId() async {
+    deviceId = await PlatformDeviceId.getDeviceId;
+  }
+
+  void getCurrentLocation(BuildContext context) async {
     showDialog(
       barrierDismissible: false,
       builder: (ctx) {
@@ -53,13 +49,33 @@ class _LocationScreenState extends State<LocationScreen> {
       context: context,
     );
 
+    Location location = Location();
+    bool serviceEnabled;
+    PermissionStatus permissionGranted;
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        Navigator.of(context).pop();
+        return;
+      }
+    }
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        Navigator.of(context).pop();
+        return;
+      }
+    }
+
     try {
       coordinates = await CurrentLocation().getCurrentLocation();
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Success!',
+            'Location Capture Success!',
             textAlign: TextAlign.center,
           ),
           backgroundColor: Colors.lightBlue,
@@ -89,6 +105,7 @@ class _LocationScreenState extends State<LocationScreen> {
             'longitude': coordinates == null ? null : coordinates!.longitude,
           },
           'zipCode': zip,
+          'deviceId': deviceId,
         });
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
