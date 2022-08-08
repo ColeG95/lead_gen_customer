@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:lead_gen_customer/screens/contact_screen.dart';
 import 'package:lead_gen_customer/screens/location_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:lead_gen_customer/screens/main_screen.dart';
 
 import 'firebase_options.dart';
 
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Long Covid HBOT',
-      home: LocationScreen(),
+      home: MainScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

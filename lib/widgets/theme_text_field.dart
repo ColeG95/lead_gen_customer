@@ -31,7 +31,7 @@ class ThemeTextField extends StatelessWidget {
         controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.grey[600]),
+          hintStyle: TextStyle(color: Colors.grey[700]),
           enabledBorder: OutlineInputBorder(),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Theme.of(context).errorColor)),

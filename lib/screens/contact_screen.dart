@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lead_gen_customer/constants.dart';
 import 'package:lead_gen_customer/responsive_widget.dart';
-import 'package:lead_gen_customer/screens/otp_screen.dart';
 import 'package:lead_gen_customer/screens/submitted_screen.dart';
 import 'package:lead_gen_customer/widgets/basic_button.dart';
 import 'package:lead_gen_customer/widgets/theme_text_field.dart';
@@ -146,55 +145,35 @@ class _ContactScreenState extends State<ContactScreen> {
     }
   }
 
-  void sendOTP(String phoneNumber, PhoneCodeSent codeSent,
-      PhoneVerificationFailed verificationFailed) {
-    if (!phoneNumber.contains('+')) phoneNumber = '+1 ' + phoneNumber;
-    _auth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      timeout: Duration(seconds: 120),
-      verificationCompleted: (PhoneAuthCredential cred) {
-        print('VERIFICATION COMPLETED');
-      },
-      verificationFailed: verificationFailed,
-      codeSent: codeSent,
-      codeAutoRetrievalTimeout: (String str) {
-        print('CODE AUTO RETRIEVAL TIMEOUT');
-      },
-    );
-  }
-
-  void codeSent(String verificationId, int forceResendingToken) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => OTPScreen(
-                  phoneNumber: _phoneController.text,
-                  verificationId: verificationId,
-                )));
-  }
-
-  void verificationFailed(FirebaseAuthException exception) {
-    print('VERIFICATION FAILED');
-  }
-
-  // Future<bool> verifyOTP(String verificationId, String otp) async {
-  //   AuthCredential credential = PhoneAuthProvider.getCredential(
-  //     verificationId: verificationId,
-  //     smsCode: otp,
+  // void sendOTP(String phoneNumber, PhoneCodeSent codeSent,
+  //     PhoneVerificationFailed verificationFailed) {
+  //   if (!phoneNumber.contains('+')) phoneNumber = '+1 ' + phoneNumber;
+  //   _auth.verifyPhoneNumber(
+  //     phoneNumber: phoneNumber,
+  //     timeout: Duration(seconds: 120),
+  //     verificationCompleted: (PhoneAuthCredential cred) {
+  //       print('VERIFICATION COMPLETED');
+  //     },
+  //     verificationFailed: verificationFailed,
+  //     codeSent: codeSent,
+  //     codeAutoRetrievalTimeout: (String str) {
+  //       print('CODE AUTO RETRIEVAL TIMEOUT');
+  //     },
   //   );
-  //   AuthResult result;
-  //   try {
-  //     result = await _auth.signInWithCredential(credential);
-  //   } catch (e) {
-  //     // throw e;
-  //     return false;
-  //   }
-  //   print(result);
-  //   (await result.user.getIdToken()).claims.forEach((k, v) {
-  //     print('k= $k and v= $v');
-  //   });
-  //   if (result.user.uid != null) return true;
-  //   return false;
+  // }
+  //
+  // void codeSent(String verificationId, int forceResendingToken) {
+  //   Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //           builder: (context) => OTPScreen(
+  //                 phoneNumber: _phoneController.text,
+  //                 verificationId: verificationId,
+  //               )));
+  // }
+  //
+  // void verificationFailed(FirebaseAuthException exception) {
+  //   print('VERIFICATION FAILED');
   // }
 
   @override
@@ -206,22 +185,21 @@ class _ContactScreenState extends State<ContactScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey[200],
-        title: Text(
-          'Find a HBOT provider near you',
-          style: TextStyle(color: Colors.black),
+    return Center(
+      child: Container(
+        width: ResponsiveWidget.isSmallScreen(context) ? 300 : 550,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white.withOpacity(.4),
         ),
-      ),
-      body: SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 20),
         child: Form(
           key: _formKey,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              SizedBox(height: 40),
               SizedBox(width: double.infinity),
               Text(
                 'How can our medical professionals contact you?',
@@ -277,7 +255,7 @@ class _ContactScreenState extends State<ContactScreen> {
                     'You ackowledge that you\'ve read and agree to our terms of service and privacy policy.',
                     style: TextStyle(
                       fontSize: 10,
-                      color: Colors.grey[600],
+                      color: Colors.grey[700],
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -297,6 +275,7 @@ class _ContactScreenState extends State<ContactScreen> {
                 onPressed: trySubmit,
                 color: isValid ? Colors.lightBlue : Colors.grey,
               ),
+              SizedBox(height: 40),
             ],
           ),
         ),

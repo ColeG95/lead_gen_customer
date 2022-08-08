@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lead_gen_customer/constants.dart';
+import 'package:lead_gen_customer/responsive_widget.dart';
 import 'package:lead_gen_customer/screens/contact_screen.dart';
 import 'package:lead_gen_customer/widgets/basic_button.dart';
 import 'package:lead_gen_customer/widgets/theme_text_field.dart';
@@ -10,7 +11,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
 class LocationScreen extends StatefulWidget {
-  LocationScreen({Key? key}) : super(key: key);
+  final void Function(Widget) changeScreen;
+
+  LocationScreen({
+    Key? key,
+    required this.changeScreen,
+  }) : super(key: key);
 
   @override
   State<LocationScreen> createState() => _LocationScreenState();
@@ -106,12 +112,17 @@ class _LocationScreenState extends State<LocationScreen> {
           },
           'zipCode': zip,
           'deviceId': deviceId,
+          'dateAdded': DateTime.now(),
+          'condition': 'long covid',
+          'email': null,
+          'phone': null,
         });
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (_) => ContactScreen(leadRef: leadRef!),
-          ),
-        );
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(
+        //     builder: (_) => ContactScreen(leadRef: leadRef!),
+        //   ),
+        // );
+        widget.changeScreen(ContactScreen(leadRef: leadRef!));
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -138,62 +149,64 @@ class _LocationScreenState extends State<LocationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey[200],
-        title: Text(
-          'Find a HBOT provider near you',
-          style: TextStyle(color: Colors.black),
+    return Center(
+      child: Container(
+        width: ResponsiveWidget.isSmallScreen(context) ? 300 : 400,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white.withOpacity(.4),
         ),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(width: double.infinity),
-          BasicButton(
-            onPressed: () {
-              getCurrentLocation(context);
-            },
-            child: Text(
-              'Get Current Location',
-              style: basicButtonStyle,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: 40),
+            SizedBox(width: double.infinity),
+            BasicButton(
+              onPressed: () {
+                getCurrentLocation(context);
+              },
+              child: Text(
+                'Get Current Location',
+                style: basicButtonStyle,
+              ),
             ),
-          ),
-          SizedBox(height: 20),
-          Text(
-            'OR',
-            style: TextStyle(
-              fontSize: 20,
+            SizedBox(height: 20),
+            Text(
+              'OR',
+              style: TextStyle(
+                fontSize: 16,
+              ),
             ),
-          ),
-          SizedBox(height: 20),
-          ThemeTextField(
-            controller: _controller,
-            hintText: 'Zip Code...',
-            width: 170,
-            textInputType: TextInputType.number,
-            onChanged: (value) {
-              setState(() {
-                zip = value;
-              });
-            },
-          ),
-          SizedBox(height: 40),
-          BasicButton(
-            child: Text(
-              'Next',
-              style: basicButtonStyle,
+            SizedBox(height: 20),
+            ThemeTextField(
+              controller: _controller,
+              hintText: 'Zip Code...',
+              width: 170,
+              textInputType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  zip = value;
+                });
+              },
             ),
-            onPressed: () {
-              trySubmit(context);
-            },
-            color: (_controller.text.length >= 4 || coordinates != null)
-                ? Colors.lightBlue
-                : Colors.grey,
-          ),
-          SizedBox(height: 50),
-        ],
+            SizedBox(height: 40),
+            BasicButton(
+              child: Text(
+                'Next',
+                style: basicButtonStyle,
+              ),
+              onPressed: () {
+                trySubmit(context);
+              },
+              color: (_controller.text.length >= 4 || coordinates != null)
+                  ? Colors.lightBlue
+                  : Colors.grey,
+            ),
+            SizedBox(height: 40),
+          ],
+        ),
       ),
     );
   }
